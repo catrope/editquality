@@ -1448,6 +1448,11 @@ models/ukwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ukwiki.reverted \
+		--versio/ukwiki.features_reverted.20k_2015.tsv
+	cut datasets/ukwiki.features_reverted.20k_2015.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.ukwiki.reverted \
 		--version=0.1.0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
@@ -1470,41 +1475,41 @@ ukwiki_tuning_reports: \
 
 ############################### Urdu Wikipedia #################################
 
-datasets/urwiki.sampled_revisions.20k_2015.tsv:
-	wget -qO- http://quarry.wmflabs.org/run/51705/output/0/tsv?download=true > \
-	datasets/urwiki.sampled_revisions.20k_2015.tsv
+datasets/urwiki.sampled_revisions.500k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/64277/output/0/tsv?download=true > \
+	datasets/urwiki.sampled_revisions.500k_2015.tsv
 
-datasets/urwiki.prelabeled_revisions.20k_2015.tsv: \
-		datasets/urwiki.sampled_revisions.20k_2015.tsv
-	cat datasets/urwiki.sampled_revisions.20k_2015.tsv | \
+datasets/urwiki.prelabeled_revisions.500k_2015.tsv: \
+		datasets/urwiki.sampled_revisions.500k_2015.tsv
+	cat datasets/urwiki.sampled_revisions.500k_2015.tsv | \
 	./utility prelabel https://ur.wikipedia.org \
 		--trusted-groups=bot,bureaucrat,sysop,rollbackers \
 		--trusted-edits=1000 \
 		--verbose > \
-	datasets/urwiki.prelabeled_revisions.20k_2015.tsv
+	datasets/urwiki.prelabeled_revisions.500k_2015.tsv
 
-datasets/urwiki.rev_reverted.20k_2015.tsv: \
-		datasets/urwiki.sampled_revisions.20k_2015.tsv
-	cat datasets/urwiki.sampled_revisions.20k_2015.tsv | \
+datasets/urwiki.rev_reverted.500k_2015.tsv: \
+		datasets/urwiki.sampled_revisions.500k_2015.tsv
+	cat datasets/urwiki.sampled_revisions.500k_2015.tsv | \
 	./utility label_reverted \
 		--host https://ur.wikipedia.org \
 		--revert-radius 3 \
 		--verbose > \
-	datasets/urwiki.rev_reverted.20k_2015.tsv
+	datasets/urwiki.rev_reverted.500k_2015.tsv
 
-datasets/urwiki.features_reverted.20k_2015.tsv: \
-		datasets/urwiki.rev_reverted.20k_2015.tsv
-	cat datasets/urwiki.rev_reverted.20k_2015.tsv | \
+datasets/urwiki.features_reverted.500k_2015.tsv: \
+		datasets/urwiki.rev_reverted.500k_2015.tsv
+	cat datasets/urwiki.rev_reverted.500k_2015.tsv | \
 	revscoring extract_features \
 		editquality.feature_lists.urwiki.reverted \
 		--host https://ur.wikipedia.org \
 		--include-revid \
 		--verbose > \
-	datasets/urwiki.features_reverted.20k_2015.tsv
+	datasets/urwiki.features_reverted.500k_2015.tsv
 
 tuning_reports/urwiki.reverted.md: \
-		datasets/urwiki.features_reverted.20k_2015.tsv
-	cat datasets/urwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+		datasets/urwiki.features_reverted.500k_2015.tsv
+	cat datasets/urwiki.features_reverted.500k_2015.tsv | cut -f2- | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.urwiki.reverted \
