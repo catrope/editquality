@@ -1488,6 +1488,21 @@ datasets/urwiki.prelabeled_revisions.500k_2015.tsv: \
 		--verbose > \
 	datasets/urwiki.prelabeled_revisions.500k_2015.tsv
 
+datasets/urwiki.revisions_for_review.5k_2015.tsv:
+		datasets/urwiki.prelabeled_revisions.500k_2015.tsv
+	(
+		echo "rev_id\tneeds_review\treason";
+		(
+			cat datasets/urwiki.prelabeled_revisions.500k_2015.tsv | \
+			grep "True" | \
+			shuf -n 2500; \
+			cat datasets/urwiki.prelabeled_revisions.500k_2015.tsv | \
+			grep "False" | \
+			shuf -n 2500 \
+	 ) | \
+	 shuf
+	) > datasets/urwiki.revisions_for_review.5k_2015.tsv
+
 datasets/urwiki.rev_reverted.500k_2015.tsv: \
 		datasets/urwiki.sampled_revisions.500k_2015.tsv
 	cat datasets/urwiki.sampled_revisions.500k_2015.tsv | \
