@@ -325,6 +325,19 @@ dewiki_tuning_reports: \
 
 ############################# English Wikipedia ###############################
 
+datasets/enwiki.sampled_revisions.20k_2016.tsv:
+	wget https://quarry.wmflabs.org/run/109211/output/0/tsv?download=true -qO- > \
+	datasets/enwiki.sampled_revisions.20k_2016.tsv
+
+datasets/enwiki.prelabeled_revisions.20k_2016.tsv: \
+		datasets/enwiki.sampled_revisions.20k_2016.tsv
+	cat datasets/enwiki.sampled_revisions.20k_2016.tsv | \
+	./utility prelabel https://en.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,patroller,autoreviewer \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/enwiki.prelabeled_revisions.20k_2016.tsv
+
 datasets/enwiki.rev_reverted.20k_2015.tsv: \
 		datasets/enwiki.rev_damaging.20k_2015.tsv
 	(echo "rev_id"; cut datasets/enwiki.rev_damaging.20k_2015.tsv -f1) | \
