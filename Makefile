@@ -1495,6 +1495,19 @@ plwiki_tuning_reports: \
 		tuning_reports/plwiki.goodfaith.md
 
 ############################# Portugueses Wikipedia ############################
+datasets/ptwiki.sampled_revisions.20k_2016.json:
+	wget https://quarry.wmflabs.org/run/143177/output/0/json-lines?download=true -qO- > \
+	datasets/ptwiki.sampled_revisions.20k_2016.json
+
+datasets/ptwiki.autolabeled_revisions.20k_2016.json: \
+		datasets/ptwiki.sampled_revisions.20k_2016.json
+	cat datasets/ptwiki.sampled_revisions.20k_2016.json | \
+	./utility autolabel --host=https://pt.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/ptwiki.autolabeled_revisions.20k_2016.json
+
 datasets/ptwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ptwiki/7/ > \
